@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "turmali"
+require "readline"
+require "racc/parser"
+require "terminal-table"
+
+stty_save = %x`stty -g`.chomp
+trap("INT") { system "stty", stty_save; exit }
+
+interpreter = Interpreter.new
+
+if file = ARGV.first
+  interpreter.eval File.read(file)
+else
+  rows = []
+  rows << ['', 'turmali repl console']
+  rows << ['filename(.tml)', 'run turmali file']
+  table = Terminal::Table.new :title => "Turmali (#{Turmali::VERSION}) REPL, Type 'quit' or 'exit' to exit", 
+          :headings => ['arg', 'description'], :rows => rows
+  puts table
+  begin
+    while line = Readline::readline("tml >> ")
+      exit if line == 'quit'
+      exit if line == 'exit'
+      Readline::HISTORY.push(line)
+      value = interpreter.eval(line) 
+      puts "=> #{value.ruby_value.inspect}"  
+    end
+  rescue Racc::ParseError => e
+    puts e ; retry
+  rescue StandardError => e
+    puts e ; retry
+  end  
+end
