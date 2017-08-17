@@ -2,7 +2,7 @@
 
 ![Turmali Logo](turmali.png "Turmali Logo")
 
-## Turmali is a website building language.
+## Turmali is a simple language through learning compiler theory
 
 	▪ As in Python, blocks of code are delimited by their indentation.
 	▪ Classes are declared with the class keyword.
